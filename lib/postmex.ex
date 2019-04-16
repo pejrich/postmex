@@ -6,8 +6,8 @@ defmodule Postmex do
   @api_version "v1/"
   @expected_fields ~w(
     created currency currency_type dropoff_eta duration expires fee id kind pickup_duration
-    properties features status complete pickup_eta dropoff_deadline quote_id customer_signature_img_href
-    manifest dropoff_identifier courier related_deliveries
+    properties features status complete pickup_eta dropoff_deadline quote_id
+    customer_signature_img_href manifest dropoff_identifier courier related_deliveries
   )
 
   def start(_type, _args) do
@@ -20,9 +20,17 @@ defmodule Postmex do
   end
 
   def process_response_body(body) do
+    body = Jason.decode!(body)
+    body_keys = body |> Map.keys()
+
+    for key <- body_keys -- @expected_fields do
+      IO.puts("\n\nSKIPPING:\n#{inspect(key)}\n\n\n")
+    end
+
     Jason.decode!(body)
     |> Dict.take(@expected_fields)
     |> Enum.map(fn {k, v} -> {String.to_atom(k), v} end)
+    |> Enum.into(%{})
   end
 
   def api_url(), do: @api_url
