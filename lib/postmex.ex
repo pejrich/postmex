@@ -1,8 +1,16 @@
 defmodule Postmex do
   use Application
+  use HTTPoison.Base
 
   @api_url "https://api.postmates.com/"
   @api_version "v1/"
+  @expected_fields ~w(
+    fee currency dropoff_eta duration expires
+    properties features
+    status complete pickup_eta 
+    dropoff_deadline quote_id customer_signature_img_href
+    manifest dropoff_identifier courier related_deliveries
+  )
 
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
