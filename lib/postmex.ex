@@ -5,10 +5,8 @@ defmodule Postmex do
   @api_url "https://api.postmates.com/"
   @api_version "v1/"
   @expected_fields ~w(
-    fee currency dropoff_eta duration expires
-    properties features
-    status complete pickup_eta 
-    dropoff_deadline quote_id customer_signature_img_href
+    created currency currency_type dropoff_eta duration expires fee id kind pickup_duration
+    properties features status complete pickup_eta dropoff_deadline quote_id customer_signature_img_href
     manifest dropoff_identifier courier related_deliveries
   )
 
@@ -23,6 +21,8 @@ defmodule Postmex do
 
   def process_response_body(body) do
     Jason.decode!(body)
+    |> Dict.take(@expected_fields)
+    |> Enum.map(fn {k, v} -> {String.to_atom(k), v} end)
   end
 
   def api_url(), do: @api_url
