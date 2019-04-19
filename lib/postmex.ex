@@ -8,6 +8,9 @@ defmodule Postmex do
     created currency currency_type dropoff_eta duration expires fee id kind pickup_duration
     properties features status complete pickup_eta dropoff_deadline quote_id
     customer_signature_img_href manifest dropoff_identifier courier related_deliveries
+    code message params courier_imminent dropoff dropoff_ready live_mode manifest_items
+    pickup pickup_deadline pickup_ready tip tracking_url undeliverable_action
+    undeliverable_reason updated
   )
 
   def start(_type, _args) do
@@ -20,8 +23,7 @@ defmodule Postmex do
   end
 
   def process_response_body(body) do
-    body = Jason.decode!(body)
-    body_keys = body |> Map.keys()
+    body_keys = Jason.decode!(body) |> Map.keys()
 
     for key <- body_keys -- @expected_fields do
       IO.puts("\n\nSKIPPING:\n#{inspect(key)}\n\n\n")
